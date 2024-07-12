@@ -1,6 +1,6 @@
-var TestErc721Token = artifacts.require("TestErc721Token");
+var PilotNFT = artifacts.require("PilotNFT");
 
 module.exports = function(deployer) {
   // deployment steps
-  deployer.deploy(TestErc721Token);
+  deployer.deploy(PilotNFT);
 };

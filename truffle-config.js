@@ -18,7 +18,7 @@
  *
  */
 
- require('dotenv').config();
+require('dotenv').config();
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const fs = require('fs');
@@ -53,7 +53,20 @@ module.exports = {
       network_id: '5',
       networkCheckTimeout: 10000,
       timeoutBlocks: 200
-    }
+    },
+    op: {
+      provider: () => new HDWalletProvider({
+        privateKeys: [process.env.WALLET_PRIVATE_KEY],
+        providerOrUrl: 'https://mainnet.optimism.io',
+        pollingInterval: 800000 // Optional: Adjust if facing network issues
+      }),
+      network_id: 10, // Optimism mainnet network ID
+      gas: 8000000, // Custom gas limit
+      gasPrice: 100000000, // 0.1 Gwei in wei
+      networkCheckTimeout: 10000,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+    },
   },
 
   // Set default mocha options here, use special reporters etc.

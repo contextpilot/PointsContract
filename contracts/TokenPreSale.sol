@@ -422,14 +422,14 @@ contract TokenPreSale is Initializable, ReentrancyGuardUpgradeable, OwnableUpgra
         }
 
         uint256 ourAllowance = USDTInterface.allowance(
-            _user,
+            _msgSender(),
             address(this)
         );
         require(usdPrice <= ourAllowance, "Make sure to add enough allowance");
         (bool success, ) = address(USDTInterface).call(
             abi.encodeWithSignature(
                 "transferFrom(address,address,uint256)",
-                _user,
+                _msgSender(),
                 owner(),
                 usdPrice
             )
@@ -505,7 +505,7 @@ contract TokenPreSale is Initializable, ReentrancyGuardUpgradeable, OwnableUpgra
             }
         }
         sendValue(payable(owner()), ethAmount);
-        if (excess > 0) sendValue(payable(_user), excess);
+        if (excess > 0) sendValue(payable(_msgSender()), excess);
         emit TokensBought(
             _user,
             _id,
@@ -650,7 +650,7 @@ contract TokenPreSale is Initializable, ReentrancyGuardUpgradeable, OwnableUpgra
             "Presale token address not set"
         );
 
-        TestErc721Token nftContract = TestErc721Token(presale[_id].saleToken);
+        PilotNFT nftContract = PilotNFT(presale[_id].saleToken);
         require(
             amount <= nftContract.balanceOf(address(this)),
             "Not enough tokens in the contract"

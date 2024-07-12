@@ -16,8 +16,8 @@ module.exports = async function (deployer) {
   // USDT Mainnet 0x55d398326f99059fF775485246999027B3197955
   // 
 
-  const testUSDT = await TestUSDT.deployed();
-  console.log("test usdt", testUSDT.address)
-  const instance = await deployProxy(TokenPreSale, ['0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526', testUSDT.address], { deployer });
+  //const testUSDT = await TestUSDT.deployed();
+  //console.log("test usdt", testUSDT.address)
+  const instance = await deployProxy(TokenPreSale, ['0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE', '0x55d398326f99059fF775485246999027B3197955'], { deployer });
   console.log('Deployed', instance.address);
 };
