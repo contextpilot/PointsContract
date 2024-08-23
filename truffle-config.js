@@ -67,6 +67,19 @@ module.exports = {
       timeoutBlocks: 200,
       skipDryRun: true,
     },
+    opbnb: {
+      provider: () => new HDWalletProvider({
+        privateKeys: [process.env.WALLET_PRIVATE_KEY],
+        providerOrUrl: 'https://opbnb-mainnet-rpc.bnbchain.org',
+        pollingInterval: 800000
+      }),
+      network_id: 204,
+      gas: 8000000,
+      gasPrice: 10, 
+      networkCheckTimeout: 10000,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+    }
   },
 
   // Set default mocha options here, use special reporters etc.
