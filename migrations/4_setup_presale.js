@@ -1,11 +1,19 @@
 const TokenPreSale = artifacts.require("TokenPreSale");
 const PilotNFT = artifacts.require("PilotNFT");
+const state = require('../migrations/migrationState');
 
 module.exports = async function (deployer, network, accounts) {
-  // First deploy the pilotNFT contract
-  const pilotNFT = await PilotNFT.deployed();
+  // Skip setup if in 'upgrade' mode
+  if (state.getMode() === 'upgrade') {
+    console.log('Upgrade mode detected, skipping presale setup');
+    return;
+  }
+
+  // Deploy the pilotNFT contract
+  const pilotNFTInstance = await PilotNFT.deployed();
   const tokenPreSaleInstance = await TokenPreSale.deployed();
-  console.log('pilotNFT deployed at', pilotNFT.address);
+
+  console.log('pilotNFT deployed at', pilotNFTInstance.address);
   console.log('TokenPreSale deployed at', tokenPreSaleInstance.address);
 
   // Setting up the presale for your pilotNFT (Modify the variables as necessary)
@@ -36,8 +44,8 @@ module.exports = async function (deployer, network, accounts) {
 
   // Update the sale token address of the presale to be the address of the pilotNFT
   const presaleId = await tokenPreSaleInstance.presaleId();
-  await tokenPreSaleInstance.changeSaleTokenAddress(presaleId.toNumber(), pilotNFT.address);
+  await tokenPreSaleInstance.changeSaleTokenAddress(presaleId.toNumber(), pilotNFTInstance.address);
 
-  console.log('pilotNFT deployed at', pilotNFT.address);
+  console.log('pilotNFT deployed at', pilotNFTInstance.address);
   console.log('TokenPreSale deployed at', tokenPreSaleInstance.address);
 };

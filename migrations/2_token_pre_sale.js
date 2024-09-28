@@ -1,6 +1,6 @@
 const { deployProxy } = require('@openzeppelin/truffle-upgrades');
 const TokenPreSale = artifacts.require("TokenPreSale");
-var TestUSDT = artifacts.require("TestUSDT");
+const state = require('../migrations/migrationState');
 
 module.exports = async function (deployer, network) {
   let oracleAddress; 
@@ -30,6 +30,13 @@ module.exports = async function (deployer, network) {
     throw new Error('Unsupported network');
   }
 
-  const instance = await deployProxy(TokenPreSale, [oracleAddress, usdtAddress], { deployer });
-  console.log('Deployed', instance.address);
+  try {
+    const existingInstance = await TokenPreSale.deployed();
+    console.log('TokenPreSale is already deployed at:', existingInstance.address);
+    state.setMode('upgrade'); // Set mode to 'upgrade'
+  } catch (e) {
+    console.log('Deploying a new instance of TokenPreSale');
+    const instance = await deployProxy(TokenPreSale, [oracleAddress, usdtAddress], { deployer });
+    console.log('Deployed TokenPreSale at:', instance.address);
+  }
 };

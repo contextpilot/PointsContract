@@ -378,73 +378,55 @@ contract TokenPreSale is Initializable, ReentrancyGuardUpgradeable, OwnableUpgra
     }
 
     function buyWithUSDTForAddress(uint256 _id, uint256 amount, address _user)
-        public
-        checkPresaleId(_id)
-        checkSaleState(_id, amount)
-        returns (bool)
-    {
-        require(!paused[_id], "Presale paused");
-        require(presale[_id].enableBuyWithUsdt > 0, "Not allowed to buy with USDT");
-        uint256 usdPrice = amount * presale[_id].price;
-        usdPrice = usdPrice / (10**12);
-        presale[_id].inSale -= amount;
+    public
+    //checkPresaleId(_id)
+    //checkSaleState(_id, amount)
+    returns (bool)
+{
+    //require(!paused[_id], "Presale paused");
+    //require(presale[_id].enableBuyWithUsdt > 0, "Not allowed to buy with USDT");
+    uint256 usdPrice = (amount * presale[_id].price) / (10**12);
+    presale[_id].inSale -= amount;
 
-        Presale memory _presale = presale[_id];
+    //Presale memory _presale = presale[_id];
 
-        if (userVesting[_user][_id].totalAmount > 0) {
-            if(_presale.baseDecimals >0 ) {
-                userVesting[_user][_id].totalAmount += (amount *
-                    _presale.baseDecimals);
-            } else {
-                userVesting[_user][_id].totalAmount += amount;
-            }
-        } else {
-            presale[_id].participants.push(_user);
-            if(_presale.baseDecimals >0 ) {
-                userVesting[_user][_id] = Vesting(
-                    (amount * _presale.baseDecimals),
-                    0,
-                    _presale.vestingStartTime + _presale.vestingCliff,
-                    _presale.vestingStartTime +
-                        _presale.vestingCliff +
-                        _presale.vestingPeriod
-                );
-            } else {
-                userVesting[_user][_id] = Vesting(
-                    amount,
-                    0,
-                    _presale.vestingStartTime + _presale.vestingCliff,
-                    _presale.vestingStartTime +
-                        _presale.vestingCliff +
-                        _presale.vestingPeriod
-                );
-            }
-        }
+    //uint256 userTotalAmount = userVesting[_user][_id].totalAmount;
+    //uint256 vestingAmount = (_presale.baseDecimals > 0) ?
+    //                        (amount * _presale.baseDecimals) : amount;
 
-        uint256 ourAllowance = USDTInterface.allowance(
+    //if (userTotalAmount > 0) {
+    //    userVesting[_user][_id].totalAmount += vestingAmount;
+    //} else {
+    //    presale[_id].participants.push(_user);
+    //    uint256 cliff = _presale.vestingStartTime + _presale.vestingCliff;
+    //    uint256 period = cliff + _presale.vestingPeriod;
+    //    userVesting[_user][_id] = Vesting(vestingAmount, 0, cliff, period);
+    //}
+
+    uint256 ourAllowance = USDTInterface.allowance(
             _msgSender(),
             address(this)
         );
-        require(usdPrice <= ourAllowance, "Make sure to add enough allowance");
-        (bool success, ) = address(USDTInterface).call(
-            abi.encodeWithSignature(
-                "transferFrom(address,address,uint256)",
-                _msgSender(),
-                owner(),
-                usdPrice
-            )
-        );
-        require(success, "Token payment failed");
-        emit TokensBought(
-            _user,
-            _id,
-            address(USDTInterface),
-            amount,
-            usdPrice,
-            block.timestamp
-        );
-        return true;
-    }
+    require(usdPrice <= ourAllowance, "Make sure to add enough allowance");
+    (bool success, ) = address(USDTInterface).call(
+        abi.encodeWithSignature(
+            "transferFrom(address,address,uint256)",
+            _msgSender(),
+            owner(),
+            usdPrice
+        )
+    );
+    require(success, "Token payment failed");
+    emit TokensBought(
+        _user,
+        _id,
+        address(USDTInterface),
+        amount,
+        usdPrice,
+        block.timestamp
+    );
+    return true;
+}
 
     /**
      * @dev To buy into a presale using USDT
